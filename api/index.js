@@ -3,6 +3,7 @@ import express from 'express';                      // Import de express
 import mongoose from 'mongoose';                    // Import de mongoose
 import dotenv from 'dotenv';                        // Import de dotenv para manejar variables de entorno
 import userRoutes from './routes/user.route.js';    // Import de las rutas de usuario
+import authRoutes from './routes/auth.route.js';    // Import de las rutas de autenticación
 
 //* CONFIGURACIÓN DE VARIABLES DE ENTORNO
 dotenv.config(); // Cargar las variables de entorno desde el archivo .env
@@ -22,6 +23,8 @@ mongoose
 // Creamos una instancia de express
 const app = express();
 
+app.use(express.json()); // Middleware para parsear el cuerpo de las peticiones en formato JSON
+
 //* INICIO DEL SERVIDOR
 app.listen(3000, () => {
     // Callback para confirmar que el servidor está corriendo
@@ -31,3 +34,14 @@ app.listen(3000, () => {
 
 // Ruta de prueba para verificar que la API está funcionando correctamente
 app.use('/api/user', userRoutes);
+app.use('/api/auth', authRoutes);
+
+app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500; // Obtener el código de estado del error o usar 500 por defecto
+    const message = err.message || 'Error interno del servidor'; // Obtener el mensaje de error o usar un mensaje por defecto
+    res.status(statusCode).json({
+        success: false, // Indicar que la respuesta no fue exitosa
+        statusCode, // Incluir el código de estado en la respuesta
+        message, // Incluir el mensaje de error en la respuesta
+    });
+});
