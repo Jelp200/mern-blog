@@ -1,7 +1,8 @@
 //* IMPORTACIONES
-import express from 'express';      // Import de express
-import mongoose from 'mongoose';    // Import de mongoose
-import dotenv from 'dotenv';        // Import de dotenv para manejar variables de entorno
+import express from 'express';                      // Import de express
+import mongoose from 'mongoose';                    // Import de mongoose
+import dotenv from 'dotenv';                        // Import de dotenv para manejar variables de entorno
+import userRoutes from './routes/user.route.js';    // Import de las rutas de usuario
 
 //* CONFIGURACIÓN DE VARIABLES DE ENTORNO
 dotenv.config(); // Cargar las variables de entorno desde el archivo .env
@@ -15,7 +16,8 @@ mongoose
     .catch((error) => {
         // Callback para manejar errores de conexión
         console.error('Error al conectar a MongoDB:', error);
-    });
+    }
+);
 
 // Creamos una instancia de express
 const app = express();
@@ -24,4 +26,8 @@ const app = express();
 app.listen(3000, () => {
     // Callback para confirmar que el servidor está corriendo
     console.log('Servidor corriendo en el puerto 3000');
-});
+    }
+);
+
+// Ruta de prueba para verificar que la API está funcionando correctamente
+app.use('/api/user', userRoutes);
