@@ -47,7 +47,7 @@ export default function Header() {
 
                 {/* Boton de registro */}
                 <Link to="/sign-in">
-                    <Button gradientDuoTone='purpleToBlue'>
+                    <Button color='blue' outline>
                         Sign In
                     </Button>
                 </Link>
