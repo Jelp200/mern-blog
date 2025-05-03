@@ -78,3 +78,37 @@ export const signin = async (req, res, next) => {
         next(error); // Pasar el error al siguiente middleware de manejo de errores
     }
 };
+
+export const google = async (req, res, next) => {
+    // Desestructuración de los datos del cuerpo de la solicitud
+    const { name, email, googlePhotoUrl } = req.body; // Extraemos name, email y googlePhotoUrl del cuerpo de la solicitud
+
+    try {
+        const user = await User.findOne({ email }); // Buscar el usuario en la base de datos por su correo electrónico
+
+        if (user) {
+            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET); // Crear un token JWT para el usuario existente
+            const { password: pass, ...rest } = user._doc; // Desestructuración para excluir la contraseña del objeto de usuario
+            res.status(200).cookie('access_token', token, {
+                httpOnly: true, // La cookie solo es accesible a través de HTTP, no a través de JavaScript
+            }).json(rest); // Responder con el usuario autenticado y el token
+        } else {
+            const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8); // Generar una contraseña aleatoria
+            const hashedPassword = bcryptjs.hashSync(generatedPassword, 10); // Hashear la contraseña generada
+            const newUser = new User({
+                username: name.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4), // Generar un nombre de usuario único
+                email,
+                password: hashedPassword, // Almacenar la contraseña hasheada en lugar de la contraseña en texto plano
+                profilePicture: googlePhotoUrl
+            });
+            await newUser.save(); // Guardar el nuevo usuario en la base de datos
+            const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET); // Crear un token JWT para el nuevo usuario
+            const { password: pass, ...rest } = newUser._doc; // Desestructuración para excluir la contraseña del objeto de usuario
+            res.status(200).cookie('access_token', token, {
+                httpOnly: true, // La cookie solo es accesible a través de HTTP, no a través de JavaScript
+            }).json(rest); // Responder con el usuario autenticado y el token
+        }
+    } catch (error) {
+        next(error); // Pasar el error al siguiente middleware de manejo de errores
+    }
+}

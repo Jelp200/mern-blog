@@ -1,17 +1,23 @@
 //* IMPORTS NECESARIOS
-import React from 'react';
 // Importamos los componentes de Flowbite
-import { Button, Navbar, TextInput, NavbarToggle, NavbarCollapse, NavbarLink } from 'flowbite-react';
+import { Button, Navbar, TextInput, NavbarToggle, NavbarCollapse, NavbarLink, Dropdown, Avatar, DropdownHeader, DropdownItem, DropdownDivider } from 'flowbite-react';
 // Importamos los iconos de react-icons
 import { Link, useLocation } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { FaMoon } from 'react-icons/fa';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleTheme } from '../redux/theme/themeSlice';
 
 //* FUNCION PRINCIPAL DEL HEADER
 // Este componente es el header de la aplicacion, donde se encuentra el logo, el buscador y los enlaces a las diferentes paginas
 export default function Header() {
     // Obtenemos la ruta actual para cambiar el color del navbar
     const path = useLocation().pathname; // Obtener la ruta actual
+
+    const dispatch = useDispatch();
+
+    // Obtenemos el usuario actual
+    const { currentUser } = useSelector(state => state.user);
 
     // Retornamos el navbar con los enlaces a las diferentes paginas
     return (
@@ -41,16 +47,46 @@ export default function Header() {
             {/* Seccion de enlaces y botones */}
             <div className='flex items-center gap-2 md:order-2'>
                 {/* Boton de modo oscuro */}
-                <Button className='w-12 h-10 hidden sm:inline' color='gray' pill>
+                <Button
+                    className='w-12 h-10 hidden sm:inline'
+                    color='gray'
+                    pill
+                    onClick={() => dispatch(toggleTheme())}
+                >
                     <FaMoon />
                 </Button>
 
-                {/* Boton de registro */}
-                <Link to="/sign-in">
-                    <Button color='blue' outline>
-                        Sign In
-                    </Button>
-                </Link>
+                {currentUser ? (
+                    <Dropdown
+                        arrowIcon={false}
+                        inline
+                        label={
+                            <Avatar
+                                alt='user'
+                                img={currentUser.profilePicture}
+                                rounded
+                            />
+                        }
+                    >
+                        <DropdownHeader>
+                            <span className='block text-sm'>@{currentUser.username}</span>
+                            <span className='block text-sm font-medium truncate'>{currentUser.email}</span>
+                        </DropdownHeader>
+                        <Link to={'/dashboard?tab=profile'}>
+                            <DropdownItem>Profile</DropdownItem>
+                        </Link>
+                        <DropdownDivider />
+                        <DropdownItem>Sign out</DropdownItem>
+                    </Dropdown>
+                ) : (
+                    /* Boton de registro */
+                    <Link to="/sign-in">
+                        <Button color='blue' outline>
+                            Sign In
+                        </Button>
+                    </Link>
+                )
+                }
 
                 {/* Boton para abrir el menu en dispositivos moviles */}
                 <NavbarToggle />
