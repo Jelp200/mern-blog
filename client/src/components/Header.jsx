@@ -4,7 +4,7 @@ import { Button, Navbar, TextInput, NavbarToggle, NavbarCollapse, NavbarLink, Dr
 // Importamos los iconos de react-icons
 import { Link, useLocation } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
-import { FaMoon } from 'react-icons/fa';
+import { FaMoon, FaSun } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../redux/theme/themeSlice';
 
@@ -18,6 +18,8 @@ export default function Header() {
 
     // Obtenemos el usuario actual
     const { currentUser } = useSelector(state => state.user);
+
+    const { theme } = useSelector((state) => state.theme);
 
     // Retornamos el navbar con los enlaces a las diferentes paginas
     return (
@@ -44,7 +46,9 @@ export default function Header() {
                 <AiOutlineSearch />
             </Button>
 
-            {/* Seccion de enlaces y botones */}
+            {/* Seccion de enlaces y botones
+            * TODO: VERIFICAR EL DARK MODE Y LIGHT MODE
+            */}
             <div className='flex items-center gap-2 md:order-2'>
                 {/* Boton de modo oscuro */}
                 <Button
@@ -53,7 +57,7 @@ export default function Header() {
                     pill
                     onClick={() => dispatch(toggleTheme())}
                 >
-                    <FaMoon />
+                    {theme == 'light' ? <FaSun/> : <FaMoon/>}
                 </Button>
 
                 {currentUser ? (

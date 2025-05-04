@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+//* Estado inicial del tema
 const initialState = {
     theme: 'light',
 };
