@@ -4,6 +4,7 @@ import mongoose from 'mongoose';                    // Import de mongoose
 import dotenv from 'dotenv';                        // Import de dotenv para manejar variables de entorno
 import userRoutes from './routes/user.route.js';    // Import de las rutas de usuario
 import authRoutes from './routes/auth.route.js';    // Import de las rutas de autenticación
+import cookieParser from 'cookie-parser';
 
 //* CONFIGURACIÓN DE VARIABLES DE ENTORNO
 dotenv.config(); // Cargar las variables de entorno desde el archivo .env
@@ -24,6 +25,7 @@ mongoose
 const app = express();
 
 app.use(express.json()); // Middleware para parsear el cuerpo de las peticiones en formato JSON
+app.use(cookieParser());
 
 //* INICIO DEL SERVIDOR
 app.listen(3000, () => {

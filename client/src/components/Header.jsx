@@ -8,6 +8,8 @@ import { FaMoon, FaSun } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../redux/theme/themeSlice';
 
+import { signoutSuccess } from '../redux/user/userSlice';
+
 //* FUNCION PRINCIPAL DEL HEADER
 // Este componente es el header de la aplicacion, donde se encuentra el logo, el buscador y los enlaces a las diferentes paginas
 export default function Header() {
@@ -20,6 +22,25 @@ export default function Header() {
     const { currentUser } = useSelector(state => state.user);
 
     const { theme } = useSelector((state) => state.theme);
+
+    const handleSignout = async () => {
+        try {
+            const res = await fetch('/api/user/signout', {
+                method: 'POST',
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.log(data.message);
+            } else {
+                dispatch(signoutSuccess());
+            }
+        } catch (error) {
+            console.log(error.message);
+
+        }
+    };
 
     // Retornamos el navbar con los enlaces a las diferentes paginas
     return (
@@ -57,7 +78,7 @@ export default function Header() {
                     pill
                     onClick={() => dispatch(toggleTheme())}
                 >
-                    {theme == 'light' ? <FaSun/> : <FaMoon/>}
+                    {theme == 'light' ? <FaSun /> : <FaMoon />}
                 </Button>
 
                 {currentUser ? (
@@ -67,7 +88,7 @@ export default function Header() {
                         label={
                             <Avatar
                                 alt='user'
-                                img={currentUser.profilePicture}
+                                img={currentUser.profilePicture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}
                                 rounded
                             />
                         }
@@ -80,7 +101,7 @@ export default function Header() {
                             <DropdownItem>Profile</DropdownItem>
                         </Link>
                         <DropdownDivider />
-                        <DropdownItem>Sign out</DropdownItem>
+                        <DropdownItem onClick={handleSignout}> Sign out</DropdownItem>
                     </Dropdown>
                 ) : (
                     /* Boton de registro */

@@ -19,12 +19,16 @@ const userSchema = new mongoose.Schema({
             type: String,
             required: true,
         },
-        googlePhotoUrl: {
+        profilePicture: {
             type: String,
             default: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png', // Imagen de perfil por defecto 
         },
-        // Se añade la opción de timestamps para crear los campos createdAt y updatedAt automáticamente
-    }, { timestamps: true }
+        isAdmin: {
+            type: Boolean,
+            default: false,
+        },
+    },
+    { timestamps: true } // Se añade la opción de timestamps para crear los campos createdAt y updatedAt automáticamente
 );
 
 //* MODEL

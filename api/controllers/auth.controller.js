@@ -64,7 +64,7 @@ export const signin = async (req, res, next) => {
         }
 
         // Crear un token JWT para el usuario autenticado
-        const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+        const token = jwt.sign({ id: validUser._id, isAdmin: validUser.isAdmin }, process.env.JWT_SECRET);
 
         // Desestructuración para excluir la contraseña del objeto de usuario
         const { password: pass, ...rest } = validUser._doc;
@@ -87,7 +87,7 @@ export const google = async (req, res, next) => {
         const user = await User.findOne({ email }); // Buscar el usuario en la base de datos por su correo electrónico
 
         if (user) {
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET); // Crear un token JWT para el usuario existente
+            const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET); // Crear un token JWT para el usuario existente
             const { password: pass, ...rest } = user._doc; // Desestructuración para excluir la contraseña del objeto de usuario
             res.status(200).cookie('access_token', token, {
                 httpOnly: true, // La cookie solo es accesible a través de HTTP, no a través de JavaScript
@@ -102,7 +102,7 @@ export const google = async (req, res, next) => {
                 profilePicture: googlePhotoUrl
             });
             await newUser.save(); // Guardar el nuevo usuario en la base de datos
-            const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET); // Crear un token JWT para el nuevo usuario
+            const token = jwt.sign({ id: newUser._id, isAdmin: newUser.isAdmin }, process.env.JWT_SECRET); // Crear un token JWT para el nuevo usuario
             const { password: pass, ...rest } = newUser._doc; // Desestructuración para excluir la contraseña del objeto de usuario
             res.status(200).cookie('access_token', token, {
                 httpOnly: true, // La cookie solo es accesible a través de HTTP, no a través de JavaScript
