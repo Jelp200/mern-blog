@@ -4,7 +4,9 @@ import mongoose from 'mongoose';                    // Import de mongoose
 import dotenv from 'dotenv';                        // Import de dotenv para manejar variables de entorno
 import userRoutes from './routes/user.route.js';    // Import de las rutas de usuario
 import authRoutes from './routes/auth.route.js';    // Import de las rutas de autenticación
+import postRoutes from './routes/post.route.js';
 import cookieParser from 'cookie-parser';
+
 
 //* CONFIGURACIÓN DE VARIABLES DE ENTORNO
 dotenv.config(); // Cargar las variables de entorno desde el archivo .env
@@ -37,6 +39,7 @@ app.listen(3000, () => {
 // Ruta de prueba para verificar que la API está funcionando correctamente
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/post', postRoutes);
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500; // Obtener el código de estado del error o usar 500 por defecto
