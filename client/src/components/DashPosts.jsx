@@ -18,7 +18,7 @@ export default function DashPosts() {
                 const data = await res.json();
                 if (res.ok) {
                     setUserPosts(data.posts);
-                    if (data.post.length < 9) {
+                    if (data.posts.length < 9) {
                         setShowMore(false);
                     }
                 }
@@ -59,13 +59,13 @@ export default function DashPosts() {
             if (!res.ok) {
                 console.log(data.message);
             } else {
-                setUserPosts((prev) => 
+                setUserPosts((prev) =>
                     prev.filter((post) => post._id !== postIdToDelete)
                 );
             }
         } catch (error) {
             console.log(error.message);
-            
+
         }
     };
 
@@ -75,17 +75,19 @@ export default function DashPosts() {
                 <>
                     <Table hoverable className='shadow-md'>
                         <TableHead>
-                            <TableHeadCell>Date updated</TableHeadCell>
-                            <TableHeadCell>Post image</TableHeadCell>
-                            <TableHeadCell>Post title</TableHeadCell>
-                            <TableHeadCell>Category</TableHeadCell>
-                            <TableHeadCell>Delete</TableHeadCell>
-                            <TableHeadCell>
-                                <span>Edit</span>
-                            </TableHeadCell>
+                            <TableRow>
+                                <TableHeadCell>Date updated</TableHeadCell>
+                                <TableHeadCell>Post image</TableHeadCell>
+                                <TableHeadCell>Post title</TableHeadCell>
+                                <TableHeadCell>Category</TableHeadCell>
+                                <TableHeadCell>Delete</TableHeadCell>
+                                <TableHeadCell>
+                                    <span>Edit</span>
+                                </TableHeadCell>
+                            </TableRow>
                         </TableHead>
                         {userPosts.map((post) => (
-                            <TableBody className='divide-y'>
+                            <TableBody className='divide-y' key={post._id}>
                                 <TableRow className='bg-white dark:border-gray-700 dark:bg-gray-800'>
                                     <TableCell>
                                         {new Date(post.updatedAt).toLocaleDateString()}
