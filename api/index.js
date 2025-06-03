@@ -5,6 +5,7 @@ import dotenv from 'dotenv';                        // Import de dotenv para man
 import userRoutes from './routes/user.route.js';    // Import de las rutas de usuario
 import authRoutes from './routes/auth.route.js';    // Import de las rutas de autenticación
 import postRoutes from './routes/post.route.js';
+import commentRoutes from './routes/comment.route.js';
 import cookieParser from 'cookie-parser';
 
 
@@ -40,6 +41,7 @@ app.listen(3000, () => {
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/post', postRoutes);
+app.use('/api/comment', commentRoutes);
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500; // Obtener el código de estado del error o usar 500 por defecto
