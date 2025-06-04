@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Sidebar, SidebarItem, SidebarItemGroup, SidebarItems } from 'flowbite-react'
-import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiAnnotation } from 'react-icons/hi'
+import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiAnnotation, HiChartPie } from 'react-icons/hi'
 import { signoutSuccess } from '../redux/user/userSlice'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -44,6 +44,21 @@ export default function DashSidebar() {
             <Sidebar className="w-full md:w-56 ">
                 <SidebarItems>
                     <SidebarItemGroup className='flex flex-col gap-1'>
+
+                        {currentUser.isAdmin && (
+                            <>
+                                <Link to='/dashboard?tab=dash'>
+                                    <SidebarItem
+                                        active={tab === 'dash'}
+                                        icon={HiChartPie}
+                                        as='div'
+                                    >
+                                        Dashboard
+                                    </SidebarItem>
+                                </Link>
+                            </>
+                        )}
+
                         <Link to='/dashboard?tab=profile'>
                             <SidebarItem
                                 active={tab === 'profile'}
@@ -65,7 +80,6 @@ export default function DashSidebar() {
                                         icon={HiDocumentText}
                                         as='div'
                                     >
-
                                         Posts
                                     </SidebarItem>
                                 </Link>
@@ -76,7 +90,6 @@ export default function DashSidebar() {
                                         icon={HiOutlineUserGroup}
                                         as='div'
                                     >
-
                                         Users
                                     </SidebarItem>
                                 </Link>
@@ -87,7 +100,6 @@ export default function DashSidebar() {
                                         icon={HiAnnotation}
                                         as='div'
                                     >
-
                                         Comments
                                     </SidebarItem>
                                 </Link>
