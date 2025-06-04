@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Sidebar, SidebarItem, SidebarItemGroup, SidebarItems } from 'flowbite-react'
-import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup } from 'react-icons/hi'
+import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiAnnotation } from 'react-icons/hi'
 import { signoutSuccess } from '../redux/user/userSlice'
 import { useDispatch, useSelector } from 'react-redux'
 
 export default function DashSidebar() {
     const location = useLocation();
     const dispatch = useDispatch();
-    const {currentUser} = useSelector((state) => state.user);
+    const { currentUser } = useSelector((state) => state.user);
     const [tab, setTab] = useState('');
-    
+
 
     useEffect(() => {
         const urlParams = new URLSearchParams(location.search);
@@ -58,29 +58,40 @@ export default function DashSidebar() {
                         </Link>
 
                         {currentUser.isAdmin && (
-                            <Link to='/dashboard?tab=posts'>
-                                <SidebarItem
-                                    active={tab === 'posts'}
-                                    icon={HiDocumentText}
-                                    as='div'
-                                >
+                            <>
+                                <Link to='/dashboard?tab=posts'>
+                                    <SidebarItem
+                                        active={tab === 'posts'}
+                                        icon={HiDocumentText}
+                                        as='div'
+                                    >
 
-                                    Posts
-                                </SidebarItem>
-                            </Link>
-                        )}
+                                        Posts
+                                    </SidebarItem>
+                                </Link>
 
-                        {currentUser.isAdmin && (
-                            <Link to='/dashboard?tab=users'>
-                                <SidebarItem
-                                    active={tab === 'users'}
-                                    icon={HiOutlineUserGroup}
-                                    as='div'
-                                >
+                                <Link to='/dashboard?tab=users'>
+                                    <SidebarItem
+                                        active={tab === 'users'}
+                                        icon={HiOutlineUserGroup}
+                                        as='div'
+                                    >
 
-                                    Users
-                                </SidebarItem>
-                            </Link>
+                                        Users
+                                    </SidebarItem>
+                                </Link>
+
+                                <Link to='/dashboard?tab=comments'>
+                                    <SidebarItem
+                                        active={tab === 'comments'}
+                                        icon={HiAnnotation}
+                                        as='div'
+                                    >
+
+                                        Comments
+                                    </SidebarItem>
+                                </Link>
+                            </>
                         )}
 
                         <SidebarItem
