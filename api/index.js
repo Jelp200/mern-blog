@@ -1,54 +1,64 @@
 //* IMPORTACIONES
-import express from 'express';                      // Import de express
-import mongoose from 'mongoose';                    // Import de mongoose
-import dotenv from 'dotenv';                        // Import de dotenv para manejar variables de entorno
-import userRoutes from './routes/user.route.js';    // Import de las rutas de usuario
-import authRoutes from './routes/auth.route.js';    // Import de las rutas de autenticación
+import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
+import path from 'path';
+
+import userRoutes from './routes/user.route.js';
+import authRoutes from './routes/auth.route.js';
 import postRoutes from './routes/post.route.js';
 import commentRoutes from './routes/comment.route.js';
-import cookieParser from 'cookie-parser';
 
+//* CONFIGURACIÓN
+dotenv.config(); // Cargar variables de entorno
 
-//* CONFIGURACIÓN DE VARIABLES DE ENTORNO
-dotenv.config(); // Cargar las variables de entorno desde el archivo .env
-
-mongoose
-    .connect(process.env.MONGODB_URI) // Conexión a la base de datos MongoDB usando la URI almacenada en las variables de entorno
-    .then(() => {
-        // Callback para confirmar la conexión a la base de datos
-        console.log('Conectado a MongoDB');
-    })
-    .catch((error) => {
-        // Callback para manejar errores de conexión
-        console.error('Error al conectar a MongoDB:', error);
-    }
-);
-
-// Creamos una instancia de express
 const app = express();
+const __dirname = path.resolve();
 
-app.use(express.json()); // Middleware para parsear el cuerpo de las peticiones en formato JSON
+//* CONEXIÓN A MONGODB
+mongoose
+    .connect(process.env.MONGODB_URI)
+    .then(() => console.log('Conectado a MongoDB'))
+    .catch((error) => console.error('Error al conectar a MongoDB:', error));
+
+//* MIDDLEWARES
+app.use(express.json()); // Para leer JSON en requests
 app.use(cookieParser());
 
-//* INICIO DEL SERVIDOR
-app.listen(3000, () => {
-    // Callback para confirmar que el servidor está corriendo
-    console.log('Servidor corriendo en el puerto 3000');
-    }
-);
+//* LOG DE RUTAS PARA DEBUG
+app.use((req, res, next) => {
+    console.log(`=> ${req.method} ${req.url}`);
+    next();
+});
 
-// Ruta de prueba para verificar que la API está funcionando correctamente
+//* RUTAS DE API
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/comment', commentRoutes);
 
+//* ARCHIVOS ESTÁTICOS DEL CLIENTE
+app.use(express.static(path.join(__dirname, 'client', 'dist')));
+
+//* RUTA CATCH-ALL PARA CLIENTE SPA (evita capturar /api/*)
+app.get(/^\/(?!api).*/, (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+});
+
+//* MIDDLEWARE DE ERRORES
 app.use((err, req, res, next) => {
-    const statusCode = err.statusCode || 500; // Obtener el código de estado del error o usar 500 por defecto
-    const message = err.message || 'Error interno del servidor'; // Obtener el mensaje de error o usar un mensaje por defecto
+    const statusCode = err.statusCode || 500;
+    const message = err.message || 'Error interno del servidor';
     res.status(statusCode).json({
-        success: false, // Indicar que la respuesta no fue exitosa
-        statusCode, // Incluir el código de estado en la respuesta
-        message, // Incluir el mensaje de error en la respuesta
+        success: false,
+        statusCode,
+        message,
     });
+});
+
+//* INICIAR SERVIDOR
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
