@@ -2,26 +2,34 @@
 // Importamos los componentes de Flowbite
 import { Button, Navbar, TextInput, NavbarToggle, NavbarCollapse, NavbarLink, Dropdown, Avatar, DropdownHeader, DropdownItem, DropdownDivider } from 'flowbite-react';
 // Importamos los iconos de react-icons
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../redux/theme/themeSlice';
 
 import { signoutSuccess } from '../redux/user/userSlice';
+import { useEffect, useState } from 'react';
 
 //* FUNCION PRINCIPAL DEL HEADER
 // Este componente es el header de la aplicacion, donde se encuentra el logo, el buscador y los enlaces a las diferentes paginas
 export default function Header() {
     // Obtenemos la ruta actual para cambiar el color del navbar
     const path = useLocation().pathname; // Obtener la ruta actual
-
+    const location = useLocation();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-
-    // Obtenemos el usuario actual
     const { currentUser } = useSelector(state => state.user);
-
     const { theme } = useSelector((state) => state.theme);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(location.search);
+        const searchTermFromUrl = urlParams.get('searchTerm');
+        if (searchTermFromUrl) {
+            setSearchTerm(searchTermFromUrl);
+        }
+    }, [location.search]);
 
     const handleSignout = async () => {
         try {
@@ -42,6 +50,14 @@ export default function Header() {
         }
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const urlParams = new URLSearchParams(location.search);
+        urlParams.set('searchTerm', searchTerm);
+        const searchQuery = urlParams.toString();
+        navigate(`/search?${searchQuery}`);
+    };
+
     // Retornamos el navbar con los enlaces a las diferentes paginas
     return (
         // Navbar de la aplicacion
@@ -53,12 +69,14 @@ export default function Header() {
             </Link>
 
             {/* Seccion de busqueda */}
-            <form>
+            <form onSubmit={handleSubmit}>
                 <TextInput
                     type="text"
                     placeholder='Search...'
                     rightIcon={AiOutlineSearch}
                     className='hidden lg:inline'
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </form>
 
